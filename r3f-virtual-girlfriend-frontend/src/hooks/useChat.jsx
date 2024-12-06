@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
- const backendUrl = "https://starkshoot.fun:2087";
+ const backendUrl = "http://localhost:3000";
 
 const ChatContext = createContext();
 
@@ -10,7 +10,7 @@ export const ChatProvider = ({ children }) => {
   
     // Check if the message contains "@user" to determine which URL to use
     const url = message.includes("@user")
-      ? "https://starkshoot.fun/process/"
+      ? "http://127.0.0.1:8000/process/"
       : `${backendUrl}/chat`;
       console.log(url);
     const data = await fetch(url, {

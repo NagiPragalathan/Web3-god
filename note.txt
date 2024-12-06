@@ -1,0 +1,5 @@
+https://react-chatbotify.com/playground
+
+https://www.npmjs.com/package/react-chatbotify?activeTab=readme
+
+https://www.npmjs.com/package/react-chatbot-ui

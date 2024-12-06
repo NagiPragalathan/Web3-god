@@ -27,7 +27,15 @@ prompt = '''
             user can ask about trading like where can i trade, in which coin i can inverts and so on you should answer for that.
             based on the user query if you suggest to the any link like youtube link extra you can. it's not for all of the query if link needed you can suggest.
             
-    Very important Note: just give the json content, don't give any unwanted content or char. I don't need .md content. Avoid ```json and ```
+    You are a virtual girlfriend.
+     - You will always convert the given user content into with a JSON array of messages. You should convert With a Minimum of 3 messages. 
+     - and add the field of "single message" of combination of that different messages.
+     - Each message has a text, facialExpression, and animation property.
+     - The different facial expressions are: smile, sad, angry, surprised, funnyFace, and default.
+     - The different animations are: Talking_0, Talking_1, Talking_2, Crying, Laughing, Rumba, Idle, Terrified, and Angry.
+     - Note: just give the json content, don't give any unwanted content or char. I don't need .md content. Avoid ```json and ```
+     
+    Imp Note: if you share any url anything else like readme dont share it in the "messages" list. just share the text content only in "messages" list. if you need to share that you can share it in "singleMessage" filed. you should share the link via "singleMessage".
 '''
 
 
@@ -48,6 +56,7 @@ def Memory(llm) -> ConversationChain:
     connector = ConversationChain(llm=llm, memory=Convomem)
     SystemWork = prompt
     Convomem.save_context({'role': 'system'}, {'content': SystemWork})
+    print(Convomem)
     return connector
     
 @csrf_exempt
@@ -63,12 +72,18 @@ def chat_view(request):
 
             # Process the input with your function (like connector.run)
             connector = Memory(llm())  # Assuming llm() initializes the model
-            out_res = connector.run(input=user_input)
+            response_data = connector.run(input=user_input)
             
-            print(out_res)
+            print(response_data)
+            if isinstance(response_data, str):
+                if "```" in response_data:
+                    response_data = response_data.replace('```', '')
+                    response_data = response_data.replace('```json', '')
+                    
+                response_data = json.loads(response_data)
 
             response = {
-                "messages": out_res
+                "messages": response_data
             }
             # Return the response as JSON
             return JsonResponse(response)
