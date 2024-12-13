@@ -5,6 +5,17 @@ import express from "express";
 import axios from 'axios';  // Axios to handle local chatbot API calls
 import * as THREE from "three"; // For morph target influences and interpolation
 import streamBuffers from 'stream-buffers';  // To handle the audio as a stream in memory
+import https from 'https';
+import fs from 'fs'; 
+
+
+
+// Load SSL certificates
+const options = {
+    key: fs.readFileSync('/etc/letsencrypt/live/starkshoot.fun/privkey.pem'),  // Replace with your SSL key path
+    cert: fs.readFileSync('/etc/letsencrypt/live/starkshoot.fun/fullchain.pem') // Replace with your SSL certificate path
+    ///etc/letsencrypt/live/starkshoot.fun/fullchain.pem
+};
 
 dotenv.config();
 
@@ -138,17 +149,17 @@ app.post("/chat", async (req, res) => {
 
   try {
     // Call the external chatbot service
-    const chatbotResponse = await axios.post('http://127.0.0.1:8000/process/', { message: userMessage });
+    const chatbotResponse = await axios.post('https://starkshoot.fun/process/', { message: userMessage });
 
-    const messages = chatbotResponse.data.messages.messages;
+    const messages = chatbotResponse.data.messages;
 
-    console.log(messages, messages.length)
+    console.log(messages)
     
     // Loop through the messages and generate audio data
     for (let i = 0; i < messages.length; i++) {
       const message = messages[i];
 
-      console.log("message : ", message, "text :", message.text)
+      console.log("message : ", message, "test :", message.text)
 
       // Generate speech directly into Base64
       message.audio = await generateSpeech(message.text);
@@ -177,6 +188,11 @@ app.post("/chat", async (req, res) => {
 });
 
 // Start the server on the specified port
-app.listen(port, () => {
-  console.log(`Virtual Girlfriend listening on port ${port}`);
+// app.listen(port, () => {
+//   console.log(`Virtual Girlfriend listening on port ${port}`);
+// });
+
+
+https.createServer(options, app).listen(2087, () => {
+  console.log(`HTTPS server running on port ${2087}`);
 });
